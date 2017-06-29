@@ -1,4 +1,6 @@
+
 ---
 - hosts: zabbix_servers
-  roles: 
-    - zabbix_installation
+  roles:
+    - zabbix_installation 
+    - zabbix_cron
