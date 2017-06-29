@@ -1,0 +1,4 @@
+--- #Zabbix backup process in crontab
+- hosts: zabbix_servers
+  roles:
+    - zabbix_cron

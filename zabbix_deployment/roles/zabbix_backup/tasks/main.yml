@@ -1,0 +1,15 @@
+- name: current date
+  local_action: shell date +%d-%m-%Y
+  register: date
+  always_run: True
+  changed_when: False
+  run_once: True
+
+- name: create Directory
+  file: path=/zabbix-db-backups/{{ date.stdout }} state=directory
+
+- name: backup zabbix mysql
+  mysql_db:
+    state: dump
+    name: zabbix
+    target: /zabbix-db-backups/{{ date.stdout }}/zabbix.sql

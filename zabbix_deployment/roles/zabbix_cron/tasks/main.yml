@@ -1,0 +1,6 @@
+- name: cronjob for backup
+  cron:
+    name: "sql backup"
+    minute: "0"
+    hour: "1"
+    job: "ansible-playbook /etc/ansible/roles/zabbix_backup.yml > /dev/null"

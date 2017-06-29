@@ -1,0 +1,51 @@
+- name: centos/zabbix repo
+  yum: name={{ item }} state=installed
+  with_items:
+    - policycoreutils-python
+    - libselinux-python
+    - MySQL-python
+    - http://repo.zabbix.com/zabbix/3.0/rhel/7/x86_64/zabbix-release-3.0-1.el7.noarch.rpm
+
+- name: Apache installation
+  yum: name=httpd state=installed
+
+- name: Installation of Mysql Server
+  yum: name=mariadb-server state=installed
+
+- name: start/enable Mysql
+  service: name=mariadb enabled=true state=restarted
+
+- name: zabbix intallation
+  yum: name={{ item }} state=installed 
+  with_items:
+    - zabbix-server-mysql
+    - zabbix-web-mysql
+
+- name: create zabbix db in mysql
+  mysql_db: name=zabbix encoding=utf8 state=present
+
+- name: create zabbix user in mysql
+  mysql_user: name=zabbix password=zabbix priv=zabbix.*:ALL host=localhost state=present
+
+#- name: preparing sql schema
+#  unarchive: 
+#    copy: no 
+#    src: /usr/share/doc/zabbix-server-mysql-3.0.9/create.sql.gz
+#    dest: /usr/share/doc/zabbix-server-mysql-3.0.9/
+#    creates: /usr/share/doc/zabbix-server-mysql-3.0.9/create.sql
+
+#- name: import schema to DB
+#  mysql_db: name=zabbix target=/usr/share/doc/zabbix-server-mysql-3.0.9/create.sql.gz state=import
+
+- name: copy zabbix config file
+  template: src=zabbix_server.conf dest=/etc/zabbix/zabbix_server.conf
+
+- name: copy zabbix web config
+  template: src=zabbix.conf dest=/etc/httpd/conf.d/zabbix.conf
+
+- name: start/enable apache
+  service: name=httpd enabled=true state=restarted
+ 
+- name: start zabbix
+  service: name=zabbix-server enabled=true state=restarted 
+
