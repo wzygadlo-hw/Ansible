@@ -2,4 +2,7 @@
 - hosts: zabbix_servers
   roles:
     - zabbix_installation 
+    
+- hosts: localhost
+  roles:
     - zabbix_cron
